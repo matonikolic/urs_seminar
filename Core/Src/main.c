@@ -199,22 +199,28 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    // PB1 - Magnet
-    if (GPIO_Pin == GPIO_PIN_1)
-    {
-        if (alarm_active == 0 && countdown_timer == -1)
-        {
-            countdown_timer = 10;
-        }
-    }
+	for(volatile int i = 0; i < 50000; i++);
 
-    // PB0 - Tipkalo
-    if (GPIO_Pin == GPIO_PIN_0)
-    {
-        alarm_active = 0;
-        countdown_timer = -1;
-    }
-}
+	    // PB1 - Magnet
+	    if (GPIO_Pin == GPIO_PIN_1)
+	    {
+	        // 2. KORAK: Tek sad, kad je sve mirno, provjeravamo je li stvarno otvoreno
+	        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_SET)
+	        {
+	            if (alarm_active == 0 && countdown_timer == -1)
+	            {
+	                countdown_timer = 10;
+	            }
+	        }
+	    }
+
+	    // PB0 - Tipkalo
+	    if (GPIO_Pin == GPIO_PIN_0)
+	    {
+	        alarm_active = 0;
+	        countdown_timer = -1;
+	    }
+	}
 /* USER CODE END 4 */
 
 /**
