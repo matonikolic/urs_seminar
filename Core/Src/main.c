@@ -91,6 +91,11 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
+    __HAL_TIM_SET_PRESCALER(&htim3, 1599);
+    __HAL_TIM_SET_AUTORELOAD(&htim3, 4999);
+
+ 
+    HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -204,7 +209,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	    // PB1 - Magnet
 	    if (GPIO_Pin == GPIO_PIN_1)
 	    {
-	        // 2. KORAK: Tek sad, kad je sve mirno, provjeravamo je li stvarno otvoreno
+	       
 	        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_SET)
 	        {
 	            if (alarm_active == 0 && countdown_timer == -1)
@@ -221,6 +226,18 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	        countdown_timer = -1;
 	    }
 	}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+   
+    if (htim->Instance == TIM3)
+    {
+        
+        if (countdown_timer > 0 && alarm_active == 0)
+        {
+            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+        }
+    }
+}
 /* USER CODE END 4 */
 
 /**
@@ -253,3 +270,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
